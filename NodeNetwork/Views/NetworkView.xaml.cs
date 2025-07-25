@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using DynamicData;
 using NodeNetwork.Utilities;
 using NodeNetwork.ViewModels;
@@ -212,18 +205,18 @@ namespace NodeNetwork.Views
                     .DisposeWith(d);
 
                 this.Events().MouseLeftButtonUp
-                    .Where(_ => ViewModel.PendingConnection != null)
-                    .Subscribe(_ => ViewModel.OnPendingConnectionDropped())
+                    .Where(_ => ViewModel?.PendingConnection != null)
+                    .Subscribe(_ => ViewModel?.OnPendingConnectionDropped())
                     .DisposeWith(d);
             });
         }
 
         private void SetupKeyboardShortcuts()
         {
-            this.WhenActivated(d =>
+            this.WhenActivated((CompositeDisposable d) =>
             {
                 this.Events().MouseLeftButtonDown.Subscribe(_ => Focus()).DisposeWith(d);
-                this.OneWayBind(ViewModel, vm => vm.DeleteSelectedNodes, v => v.deleteBinding.Command).DisposeWith(d);
+                this.Events().KeyDown.Where(k => k.Key == Key.Delete).InvokeCommand(this, v=> v.ViewModel.DeleteSelectedNodes).DisposeWith(d);
             });
         }
 

@@ -10,9 +10,6 @@
              xmlns:wpf="clr-namespace:NodeNetwork.Utilities.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="800" Focusable="True" AllowDrop="True" x:Name="self" Background="#333">
-    <UserControl.InputBindings>
-        <KeyBinding x:Name="deleteBinding" Key="Delete"/>
-    </UserControl.InputBindings>
     <UserControl.Resources>
         <wpf:BoolToZIndexConverter x:Key="BoolToZIndexConverter"/>
     </UserControl.Resources>
