@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using NodeNetwork.Utilities;
 using NodeNetwork.ViewModels;
 using ReactiveUI;
 using Splat;
@@ -59,7 +62,11 @@ namespace NodeNetwork.Views
                 this.OneWayBind(ViewModel, vm => vm.Port.IsVisible, v => v.EndpointHost.Visibility).DisposeWith(d);
                 this.OneWayBind(ViewModel, vm => vm.Editor, v => v.EditorHost.ViewModel).DisposeWith(d);
                 this.OneWayBind(ViewModel, vm => vm.IsEditorVisible, v => v.EditorHost.Visibility).DisposeWith(d);
-                this.OneWayBind(ViewModel, vm => vm.Icon, v => v.Icon.Source, img => img?.ToNative()).DisposeWith(d);
+                this.WhenAnyValue(x => x.ViewModel.Icon)
+                    .SelectMany(icon => icon?.ToNativeAsync().ToObservable() ?? Observable.Return<ImageSource>(null))
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .BindTo(this, x => x.Icon.Source)
+                    .DisposeWith(d);
 
                 this.WhenAnyValue(v => v.ViewModel.Name, v => v.ViewModel.Icon,
                         (name, icon) => String.IsNullOrEmpty(name) && icon == null)
