@@ -21,8 +21,10 @@ using ExampleShaderEditorApp.Render;
 using ExampleShaderEditorApp.ViewModels;
 using MathNet.Numerics.LinearAlgebra;
 using OpenTK;
+using OpenTK.GLControl;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Windowing.Common;
 using ReactiveUI;
 
 namespace ExampleShaderEditorApp.Views
@@ -103,16 +105,13 @@ namespace ExampleShaderEditorApp.Views
             InitializeComponent();
             startTime = DateTime.Now;
 
-            glControl = new GLControl(new GraphicsMode(new ColorFormat(24), 24), 3, 3, GraphicsContextFlags.Default)
-            {
-                Dock = System.Windows.Forms.DockStyle.Fill
-            };
+            GLControlSettings glSettings = new() { Flags = ContextFlags.Default, DepthBits = 24, APIVersion = new Version(3, 3) };
+            glControl = new GLControl(glSettings) { Dock = System.Windows.Forms.DockStyle.Fill };
             glControl.Paint += GlControl_Render;
 
             InitContext();
 
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(16);
+            DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
             timer.Tick += (s, e) => {
                 glControl.Invalidate();
             };
